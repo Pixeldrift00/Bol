@@ -1,13 +1,20 @@
-// Simple handler for Cloudflare Pages
+// Handler for Cloudflare Pages
 export function onRequest(context) {
-  // For API routes, pass through to the appropriate function
+  // Get the URL and pathname
   const url = new URL(context.request.url);
+  const pathname = url.pathname;
   
-  if (url.pathname.startsWith('/api/')) {
-    // Let API requests be handled by other functions
+  // If this is the root path or an asset request, serve the static content
+  if (pathname === '/' || pathname.includes('.')) {
     return context.next();
   }
   
-  // For all other routes, let the static site handle it
-  return context.next();
+  // For all other routes, serve the index.html file to support SPA routing
+  return new Response(null, {
+    status: 200,
+    headers: {
+      'Content-Type': 'text/html',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+    },
+  });
 }

@@ -2,18 +2,3 @@
 name = "bolt"
 compatibility_flags = ["nodejs_compat"]
 compatibility_date = "2024-07-01"
-pages_build_output_dir = "./build/client"
-send_metrics = false
-
-[build]
-command = "npm install && npm run build"
-
-[site]
-bucket = "build/client"
-
-[build.upload]
-format = "service-worker"
-
-[[build.upload.rules]]
-type = "ESModule"
-globs = ["**/*.js"]

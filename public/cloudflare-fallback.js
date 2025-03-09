@@ -5,6 +5,7 @@
   // Check if we're running on Cloudflare Pages
   const isCloudflarePages = window.location.hostname.includes('pages.dev') || 
                            document.referrer.includes('pages.dev') ||
+                           window.location.hostname.includes('cloudflare') ||
                            window.CLOUDFLARE_PAGES_ENVIRONMENT === true;
   
   if (!isCloudflarePages) {
@@ -13,6 +14,10 @@
   }
   
   console.log('[Cloudflare Fallback] Running in Cloudflare Pages environment');
+  
+  // Set global flag immediately
+  window.CLOUDFLARE_PAGES_ENVIRONMENT = true;
+  window.WEBCONTAINER_FAILED = true;
   
   // Set a timeout to check if the app has loaded properly
   const fallbackTimeout = setTimeout(() => {
@@ -24,10 +29,6 @@
       
       // Try to dispatch the webcontainer-failed event
       document.dispatchEvent(new CustomEvent('webcontainer-failed'));
-      
-      // Set a flag that can be checked by the application
-      window.CLOUDFLARE_PAGES_ENVIRONMENT = true;
-      window.WEBCONTAINER_FAILED = true;
       
       // Dispatch a custom event that the app can listen for
       document.dispatchEvent(new CustomEvent('cloudflare-pages-detected'));

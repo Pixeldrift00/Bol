@@ -24,7 +24,7 @@ dist-ssr
 
 /.history
 /.cache
-/build
+# /build - Commented out to allow Cloudflare Pages deployment
 .env.local
 .env
 .dev.vars

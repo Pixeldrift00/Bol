@@ -52,6 +52,8 @@ const inlineThemeCode = stripIndents`
 
     document.querySelector('html')?.setAttribute('data-theme', theme);
   }
+// Add this line to the <head> section of your root.tsx file
+<script src="/debug.js" defer></script>
 `;
 
 export const Head = createHead(() => (

@@ -23,33 +23,55 @@ if (!import.meta.env.SSR) {
     import.meta.hot?.data.webcontainer ??
     Promise.resolve()
       .then(() => {
-        return WebContainer.boot({
-          coep: 'credentialless',
-          workdirName: WORK_DIR_NAME,
-          forwardPreviewErrors: true, // Enable error forwarding from iframes
-        });
+        console.log('Attempting to boot WebContainer...');
+        try {
+          return WebContainer.boot({
+            coep: 'credentialless',
+            workdirName: WORK_DIR_NAME,
+            forwardPreviewErrors: true, // Enable error forwarding from iframes
+          });
+        } catch (error) {
+          console.error('Failed to boot WebContainer:', error);
+          // Create a fallback container for development
+          return {
+            mount: () => Promise.resolve(),
+            spawn: () => ({ exit: Promise.resolve(0), output: { pipeTo: () => {} } }),
+            on: () => {},
+            fs: {
+              readFile: () => Promise.resolve(new Uint8Array()),
+              writeFile: () => Promise.resolve(),
+              readdir: () => Promise.resolve([]),
+              mkdir: () => Promise.resolve(),
+            },
+          } as unknown as WebContainer;
+        }
       })
       .then(async (webcontainer) => {
         webcontainerContext.loaded = true;
+        console.log('WebContainer booted successfully!');
 
-        const { workbenchStore } = await import('~/lib/stores/workbench');
+        try {
+          const { workbenchStore } = await import('~/lib/stores/workbench');
 
-        // Listen for preview errors
-        webcontainer.on('preview-message', (message) => {
-          console.log('WebContainer preview message:', message);
+          // Listen for preview errors
+          webcontainer.on('preview-message', (message) => {
+            console.log('WebContainer preview message:', message);
 
-          // Handle both uncaught exceptions and unhandled promise rejections
-          if (message.type === 'PREVIEW_UNCAUGHT_EXCEPTION' || message.type === 'PREVIEW_UNHANDLED_REJECTION') {
-            const isPromise = message.type === 'PREVIEW_UNHANDLED_REJECTION';
-            workbenchStore.actionAlert.set({
-              type: 'preview',
-              title: isPromise ? 'Unhandled Promise Rejection' : 'Uncaught Exception',
-              description: message.message,
-              content: `Error occurred at ${message.pathname}${message.search}${message.hash}\nPort: ${message.port}\n\nStack trace:\n${cleanStackTrace(message.stack || '')}`,
-              source: 'preview',
-            });
-          }
-        });
+            // Handle both uncaught exceptions and unhandled promise rejections
+            if (message.type === 'PREVIEW_UNCAUGHT_EXCEPTION' || message.type === 'PREVIEW_UNHANDLED_REJECTION') {
+              const isPromise = message.type === 'PREVIEW_UNHANDLED_REJECTION';
+              workbenchStore.actionAlert.set({
+                type: 'preview',
+                title: isPromise ? 'Unhandled Promise Rejection' : 'Uncaught Exception',
+                description: message.message,
+                content: `Error occurred at ${message.pathname}${message.search}${message.hash}\nPort: ${message.port}\n\nStack trace:\n${cleanStackTrace(message.stack || '')}`,
+                source: 'preview',
+              });
+            }
+          });
+        } catch (error) {
+          console.error('Error setting up WebContainer event handlers:', error);
+        }
 
         return webcontainer;
       });

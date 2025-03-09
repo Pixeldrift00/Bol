@@ -4,3 +4,4 @@
   Referrer-Policy: no-referrer
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://*.api.sambanova.ai https://*.openai.com https://*.anthropic.com https://*.groq.com https://*.mistral.ai https://*.huggingface.co https://*.openrouter.ai https://*.perplexity.ai https://*.cohere.com https://*.together.xyz https://*.x.ai https://*.deepseek.com https://*.google.com https://*.googleapis.com https://api.github.com; font-src 'self'; object-src 'none'; media-src 'self'; worker-src 'self' blob:; manifest-src 'self'; base-uri 'self'; form-action 'self';
+  Cache-Control: no-cache, must-revalidate, max-age=0

@@ -1,8 +1,6 @@
 [build]
-command = "npm install && npm run build"
-node_version = "20.15.1"
+command = "npm run build:cloudflare"
 output_directory = "build/client"
 
 [build.environment]
 NODE_VERSION = "20.15.1"
-NPM_FLAGS = "--version"

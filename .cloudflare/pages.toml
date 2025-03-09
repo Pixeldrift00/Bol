@@ -1,6 +1,7 @@
 [build]
 command = "npm install && npm run build"
 node_version = "20.15.1"
+output_directory = "build/client"
 
 [build.environment]
 NODE_VERSION = "20.15.1"

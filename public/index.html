@@ -4,15 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bolt.DIY</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <script>
-    // Check if we're on the placeholder page
-    if (window.location.pathname === '/index.html') {
-      window.location.href = '/';
-    }
+    // Set initial theme
+    const theme = localStorage.getItem('bolt_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.classList.toggle('dark', theme === 'dark');
   </script>
+  <script src="/loading-detector.js"></script>
 </head>
 <body>
-  <h1>Loading Bolt.DIY...</h1>
-  <p>If you're not redirected automatically, please click <a href="/">here</a>.</p>
+  <div id="root"></div>
+  <script type="module" src="/entry.client.tsx"></script>
 </body>
 </html>

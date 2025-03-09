@@ -1,5 +1,5 @@
 [build]
-command = "npm install -g pnpm@9.4.0 && pnpm install && pnpm run build"
+command = "npm install && npm run build"
 node_version = "20.15.1"
 
 [build.environment]

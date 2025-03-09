@@ -14,7 +14,3 @@ export function onRequest(context) {
     },
   });
 }
-
-export const onRequest = createPagesFunctionHandler({
-  build: serverBuild as unknown as ServerBuild,
-});

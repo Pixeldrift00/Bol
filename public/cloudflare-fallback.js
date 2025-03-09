@@ -4,7 +4,15 @@
   
   // Check if we're running on Cloudflare Pages
   const isCloudflarePages = window.location.hostname.includes('pages.dev') || 
-                           document.referrer.includes('pages.dev');
+                           document.referrer.includes('pages.dev') ||
+                           window.CLOUDFLARE_PAGES_ENVIRONMENT === true;
+  
+  if (!isCloudflarePages) {
+    console.log('[Cloudflare Fallback] Not running in Cloudflare Pages environment, script inactive');
+    return;
+  }
+  
+  console.log('[Cloudflare Fallback] Running in Cloudflare Pages environment');
   
   // Set a timeout to check if the app has loaded properly
   const fallbackTimeout = setTimeout(() => {
@@ -17,44 +25,33 @@
       // Try to dispatch the webcontainer-failed event
       document.dispatchEvent(new CustomEvent('webcontainer-failed'));
       
-      // If we're on Cloudflare Pages, try to bypass WebContainer initialization
-      if (isCloudflarePages) {
-        console.log('[Cloudflare Fallback] Detected Cloudflare Pages environment, applying specific fixes');
+      // Set a flag that can be checked by the application
+      window.CLOUDFLARE_PAGES_ENVIRONMENT = true;
+      window.WEBCONTAINER_FAILED = true;
+      
+      // Dispatch a custom event that the app can listen for
+      document.dispatchEvent(new CustomEvent('cloudflare-pages-detected'));
+      document.dispatchEvent(new CustomEvent('force-continue'));
+      
+      // Force the app to continue without WebContainer if possible
+      if (typeof window.forceContinue === 'function') {
+        console.log('[Cloudflare Fallback] Attempting to force continue...');
+        window.forceContinue();
         
-        // Set a flag that can be checked by the application
-        window.CLOUDFLARE_PAGES_ENVIRONMENT = true;
-        
-        // Dispatch a custom event that the app can listen for
-        document.dispatchEvent(new CustomEvent('cloudflare-pages-detected'));
-        
-        // Force the app to continue without WebContainer if possible
-        if (window.forceContinue) {
-          window.forceContinue();
-        }
+        // Give it another chance to load
+        setTimeout(() => {
+          if (!rootElement || rootElement.children.length === 0) {
+            console.log('[Cloudflare Fallback] Force continue failed, redirecting to fallback page');
+            window.location.href = '/cloudflare-fallback.html';
+          }
+        }, 5000);
+      } else {
+        // If forceContinue is not available, go directly to fallback
+        console.log('[Cloudflare Fallback] No forceContinue function available, redirecting to fallback page');
+        window.location.href = '/cloudflare-fallback.html';
       }
-      
-      // Add a visible notification
-      const fallbackNotice = document.createElement('div');
-      fallbackNotice.style.position = 'fixed';
-      fallbackNotice.style.top = '10px';
-      fallbackNotice.style.left = '50%';
-      fallbackNotice.style.transform = 'translateX(-50%)';
-      fallbackNotice.style.background = 'rgba(255,165,0,0.9)';
-      fallbackNotice.style.color = 'white';
-      fallbackNotice.style.padding = '10px 20px';
-      fallbackNotice.style.borderRadius = '5px';
-      fallbackNotice.style.zIndex = '999999';
-      fallbackNotice.style.textAlign = 'center';
-      fallbackNotice.style.maxWidth = '80%';
-      fallbackNotice.innerHTML = '<strong>Cloudflare Pages Detected</strong><br>Some features may be limited. <button id="cf-refresh" style="background: white; color: black; border: none; padding: 5px 10px; margin-top: 5px; border-radius: 3px; cursor: pointer;">Refresh</button>';
-      document.body.appendChild(fallbackNotice);
-      
-      // Add refresh button functionality
-      document.getElementById('cf-refresh').addEventListener('click', () => {
-        window.location.reload();
-      });
     }
-  }, 10000); // Check after 10 seconds
+  }, 15000); // Check after 15 seconds - longer timeout to give more chance to load
   
   // Clear the timeout if the app loads successfully
   window.addEventListener('load', () => {
@@ -65,5 +62,35 @@
         clearTimeout(fallbackTimeout);
       }
     }, 2000); // Give a little extra time for React to render
+  });
+  
+  // Also listen for React mount success from the mount handler
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.reactMountHandler) {
+      console.log('[Cloudflare Fallback] React mount handler detected, integrating with fallback');
+      const originalCheck = window.reactMountHandler.checkReactMount;
+      window.reactMountHandler.checkReactMount = function() {
+        const result = originalCheck();
+        if (result) {
+          console.log('[Cloudflare Fallback] React mount detected by handler, disabling fallback');
+          clearTimeout(fallbackTimeout);
+        }
+        return result;
+      };
+    }
+    
+    // Also integrate with the enhanced handler if available
+    if (window.cloudflareEnhanced) {
+      console.log('[Cloudflare Fallback] Enhanced handler detected, integrating with fallback');
+      const originalCheck = window.cloudflareEnhanced.checkReactMount;
+      window.cloudflareEnhanced.checkReactMount = function() {
+        const result = originalCheck();
+        if (result) {
+          console.log('[Cloudflare Fallback] React mount detected by enhanced handler, disabling fallback');
+          clearTimeout(fallbackTimeout);
+        }
+        return result;
+      };
+    }
   });
 })();

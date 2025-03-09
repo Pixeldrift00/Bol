@@ -10,7 +10,10 @@
     const theme = localStorage.getItem('bolt_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     document.documentElement.classList.toggle('dark', theme === 'dark');
   </script>
+  <!-- Load the enhanced Cloudflare Pages handler first -->
+  <script src="/cloudflare-pages-enhanced.js"></script>
   <script src="/cloudflare-pages-handler.js"></script>
+  <script src="/react-mount-handler.js"></script>
   <script src="/loading-detector.js"></script>
   <script src="/cloudflare-debug.js"></script>
   <script src="/cloudflare-fallback.js"></script>

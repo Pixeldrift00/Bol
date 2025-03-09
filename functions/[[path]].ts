@@ -1,5 +1,5 @@
 // Simple handler for Cloudflare Pages
-export function onRequest(_context: unknown): Response {
+export function onRequest(context) {
   // Return a simple redirect to the client-side app
   return new Response(null, {
     status: 302,

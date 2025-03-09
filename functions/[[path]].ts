@@ -1,10 +1,18 @@
 // Simple handler for Cloudflare Pages
 export function onRequest(context) {
-  // Return a simple redirect to the client-side app
+  const url = new URL(context.request.url);
+  
+  // API routes should be handled by functions
+  if (url.pathname.startsWith('/api/')) {
+    return new Response("API endpoint not implemented", { status: 501 });
+  }
+  
+  // For all other routes, serve the SPA
   return new Response(null, {
-    status: 302,
+    status: 200,
     headers: {
-      Location: '/',
+      'Content-Type': 'text/html',
+      'Location': '/',
     },
   });
 }

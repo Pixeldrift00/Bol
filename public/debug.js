@@ -1,4 +1,4 @@
-// Add this to your public folder
+// Debug script to help identify WebContainer issues
 window.addEventListener('DOMContentLoaded', () => {
   console.log('DOM loaded');
   

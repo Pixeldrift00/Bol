@@ -52,8 +52,6 @@ const inlineThemeCode = stripIndents`
 
     document.querySelector('html')?.setAttribute('data-theme', theme);
   }
-// Add this line to the <head> section of your root.tsx file
-<script src="/debug.js" defer></script>
 `;
 
 export const Head = createHead(() => (
@@ -63,6 +61,8 @@ export const Head = createHead(() => (
     <Meta />
     <Links />
     <script dangerouslySetInnerHTML={{ __html: inlineThemeCode }} />
+    <script src="/debug.js" defer></script>
+    <script src="/loading-detector.js" defer></script>
   </>
 ));
 

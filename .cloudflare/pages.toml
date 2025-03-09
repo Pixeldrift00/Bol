@@ -1,5 +1,5 @@
 [build]
-command = "pnpm install && NODE_ENV=production pnpm run build"
+command = "NODE_ENV=production pnpm install && pnpm run build"
 output_directory = "build/client"
 
 [build.environment]

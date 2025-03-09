@@ -522,3 +522,25 @@ export const ChatImpl = memo(
     );
   },
 );
+
+// Add this at the top of your Chat.client.tsx file
+useEffect(() => {
+  // Listen for WebContainer failure and continue anyway
+  const handleWebContainerFailure = () => {
+    // Force the app to continue loading
+    setIsLoading(false);
+  };
+  
+  document.addEventListener('webcontainer-failed', handleWebContainerFailure);
+  
+  // Set a timeout to bypass loading screen if it takes too long
+  const timeoutId = setTimeout(() => {
+    console.log('Loading timeout reached, continuing anyway');
+    setIsLoading(false);
+  }, 15000);
+  
+  return () => {
+    document.removeEventListener('webcontainer-failed', handleWebContainerFailure);
+    clearTimeout(timeoutId);
+  };
+}, []);

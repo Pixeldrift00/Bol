@@ -24,27 +24,35 @@ if (!import.meta.env.SSR) {
     Promise.resolve()
       .then(() => {
         console.log('Attempting to boot WebContainer...');
-        try {
-          return WebContainer.boot({
+        // Add a timeout to prevent hanging forever
+        return Promise.race([
+          WebContainer.boot({
             coep: 'credentialless',
             workdirName: WORK_DIR_NAME,
             forwardPreviewErrors: true, // Enable error forwarding from iframes
-          });
-        } catch (error) {
-          console.error('Failed to boot WebContainer:', error);
-          // Create a fallback container for development
-          return {
-            mount: () => Promise.resolve(),
-            spawn: () => ({ exit: Promise.resolve(0), output: { pipeTo: () => {} } }),
-            on: () => {},
-            fs: {
-              readFile: () => Promise.resolve(new Uint8Array()),
-              writeFile: () => Promise.resolve(),
-              readdir: () => Promise.resolve([]),
-              mkdir: () => Promise.resolve(),
-            },
-          } as unknown as WebContainer;
-        }
+          }),
+          new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('WebContainer boot timeout')), 10000);
+          })
+        ]);
+      })
+      .catch(error => {
+        console.error('Failed to boot WebContainer:', error);
+        // Force the app to continue loading even if WebContainer fails
+        document.dispatchEvent(new CustomEvent('webcontainer-failed'));
+        
+        // Create a fallback container
+        return {
+          mount: () => Promise.resolve(),
+          spawn: () => ({ exit: Promise.resolve(0), output: { pipeTo: () => {} } }),
+          on: () => {},
+          fs: {
+            readFile: () => Promise.resolve(new Uint8Array()),
+            writeFile: () => Promise.resolve(),
+            readdir: () => Promise.resolve([]),
+            mkdir: () => Promise.resolve(),
+          },
+        } as unknown as WebContainer;
       })
       .then(async (webcontainer) => {
         webcontainerContext.loaded = true;

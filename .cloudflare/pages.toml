@@ -1,8 +1,7 @@
 [build]
-command = "npm install && npm run build"
+command = "pnpm install && pnpm run build"
 output_directory = "build/client"
 
 [build.environment]
 NODE_VERSION = "18.7.1"
-NPM_FLAGS = "--version"
 SKIP_ASDF = "true"

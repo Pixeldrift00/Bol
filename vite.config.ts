@@ -94,30 +94,11 @@ export default defineConfig((config) => {
       target: 'esnext',
       rollupOptions: {
         input: {
-          // Ensure package.json is included
           app: './index.html',
-        },
-        output: {
-          assetFileNames: (assetInfo) => {
-            if (assetInfo.name === 'package.json') {
-              return 'package.json';
-            }
-            return 'assets/[name]-[hash][extname]';
-          },
         },
       },
     },
     plugins: [
-      {
-        name: 'handle-package-json',
-        generateBundle() {
-          this.emitFile({
-            type: 'asset',
-            fileName: 'package.json',
-            source: readFileSync('package.json', 'utf-8')
-          });
-        }
-      },
       nodePolyfills({
         include: ['path', 'buffer', 'process'],
       }),

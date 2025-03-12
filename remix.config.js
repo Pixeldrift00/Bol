@@ -1,7 +1,7 @@
 /** @type {import('@remix-run/dev').AppConfig} */
 module.exports = {
   ignoredRouteFiles: ["**/.*"],
-  serverModuleFormat: "cjs", // Change to CommonJS for better Netlify compatibility
+  serverModuleFormat: "esm", // Change to CommonJS for better Netlify compatibility
   serverBuildTarget: "netlify", // Add Netlify as the build target
   future: {
     v2_dev: true,

@@ -1,5 +1,5 @@
 [build]
-  command = "pnpm run build"
+  command = "pnpm install && node pre-start.cjs && pnpm run build"
   publish = "build/client"
   node_bundler = "esbuild"
   base = "/"
@@ -18,6 +18,12 @@
 [functions]
   directory = "functions"
   included_files = ["build/server/**/*", "build/client/**/*", "package.json"]
+
+[[redirects]]
+  from = "/@app/*"
+  to = "/.netlify/functions/path-handler"
+  status = 200
+  force = true
 
 [[redirects]]
   from = "/api/*"

@@ -28,7 +28,8 @@
     "typegen": "wrangler types",
     "preview": "pnpm run build && pnpm run start",
     "prepare": "husky",
-    "clean": "node scripts/clean.js"
+    "clean": "node scripts/clean.js",
+    "postbuild": "node scripts/post-build.js"
   },
   "engines": {
     "node": ">=20.15.1",
@@ -109,6 +110,7 @@
     "js-cookie": "^3.0.5",
     "jspdf": "^2.5.2",
     "jszip": "^3.10.1",
+    "md5": "^2.3.0",
     "nanostores": "^0.10.3",
     "ollama-ai-provider": "^0.15.2",
     "path-browserify": "^1.0.1",
@@ -128,6 +130,7 @@
     "remark-gfm": "^4.0.0",
     "remix-island": "^0.2.0",
     "remix-utils": "^7.7.0",
+    "remix-vite": "^0.3.1",
     "shiki": "^1.24.0",
     "tailwind-merge": "^2.2.1",
     "unist-util-visit": "^5.0.0",

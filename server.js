@@ -1,5 +1,5 @@
 import { createRequestHandler } from '@remix-run/netlify';
-import * as build from '@remix-run/dev/server-build';
+import * as build from './build/server/index.js';
 
 export const handler = createRequestHandler({
   build,
@@ -9,11 +9,6 @@ export const handler = createRequestHandler({
     const url = new URL(event.rawUrl);
     const path = url.pathname;
     
-    // Handle special route cases
-    if (path.startsWith('/@app/')) {
-      event.path = path.replace('/@app/', '/app/');
-    }
-
     return {
       env: process.env,
       netlify: event.context,

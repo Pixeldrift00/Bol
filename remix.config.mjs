@@ -1,9 +1,11 @@
-/** @type {import('@remix-run/dev').AppConfig} */
-module.exports = {
-  ignoredRouteFiles: ["**/.*"],
+/** @type {import('@remix-run/netlify').AppConfig} */
+export default {
+  ignoredRouteFiles: ["**/.*", "**/*.test.{js,jsx,ts,tsx}"],
   serverModuleFormat: "esm",
   serverBuildTarget: "netlify",
-  server: "./server.js",
+  serverBuildPath: "build/server/index.js",
+  serverDependenciesToBundle: "all",
+  server: process.env.NODE_ENV === "development" ? undefined : "./server.js",
   future: {
     v2_dev: true,
     v2_errorBoundary: true,
@@ -17,5 +19,6 @@ module.exports = {
       route("/@app/*", "routes/$1.tsx");
       route("/api/*", "routes/api.$1.tsx");
     });
-  }
+  },
+  watchPaths: ["./package.json"]
 };

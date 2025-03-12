@@ -17,6 +17,12 @@ async function postBuild() {
       join(process.cwd(), 'package.json'),
       join(process.cwd(), 'build/client/package.json')
     );
+
+    // Add server copy
+    await copyFile(
+      join(process.cwd(), 'package.json'),
+      join(process.cwd(), 'build/server/package.json')
+    );
     
     console.log('Post-build file copying completed successfully');
   } catch (error) {

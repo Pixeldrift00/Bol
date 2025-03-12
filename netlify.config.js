@@ -6,15 +6,13 @@ module.exports = {
   
   // Configure build settings
   build: {
-    // Command to execute before the build
-    command: "pnpm run build",
-    // Directory to publish (output of the build)
+    base: "/",
+    command: "pnpm install && pnpm run build",
     publish: "build/client",
-    // Environment variables to be set during build
     environment: {
-      NODE_VERSION: "18.18.0",
+      NODE_VERSION: "20.15.1",
       PNPM_VERSION: "9.4.0",
-      // Add any other environment variables needed for the build
+      NODE_ENV: "production"
     },
   },
   
@@ -28,6 +26,8 @@ module.exports = {
   // Configure serverless functions
   functions: {
     directory: "functions",
+    node_bundler: "esbuild",
+    included_files: ["build/server/**/*"]
   },
   
   // Configure redirects

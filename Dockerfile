@@ -1,15 +1,16 @@
-ARG BASE=node:18.18.0
+ARG BASE=node:20.15.1
 FROM ${BASE} AS base
 
 WORKDIR /app
 
-# Install dependencies (this step is cached as long as the dependencies don't change)
+# Install pnpm with specific version
+RUN npm install -g pnpm@9.4.0
+
+# Copy package files
 COPY package.json pnpm-lock.yaml ./
 
-#RUN npm install -g corepack@latest
-
-#RUN corepack enable pnpm && pnpm install
-RUN npm install -g pnpm && pnpm install
+# Install dependencies
+RUN pnpm install
 
 # Copy the rest of your app's source code
 COPY . .

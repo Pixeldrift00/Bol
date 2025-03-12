@@ -358,7 +358,7 @@ importers:
         specifier: ^3.3.2
         version: 3.3.2
       pnpm:
-        specifier: ^9.14.4
+        specifier: ^9.4.0
         version: 9.15.5
       prettier:
         specifier: ^3.4.1

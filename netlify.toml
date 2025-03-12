@@ -21,3 +21,4 @@
   NODE_VERSION = "18.18.0"
   NPM_FLAGS = "--version"
   PNPM_VERSION = "9.4.0"
+  NODE_OPTIONS = "--max_old_space_size=4096"

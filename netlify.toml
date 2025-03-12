@@ -1,6 +1,6 @@
 [build]
   command = "pnpm install && pnpm run build"
-  publish = "build"
+  publish = "build/client"
   node_bundler = "esbuild"
   
 
@@ -34,7 +34,7 @@
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/.netlify/functions/path-handler"
   status = 200
 
 [[headers]]

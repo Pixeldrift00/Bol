@@ -7893,6 +7893,7 @@ packages:
   wrangler@3.108.0:
     resolution: {integrity: sha512-w8J0VtDqn8F94qw+HnxFbri7MMdT/to5/w1QHAjR//tIHkilKAUFNaEF3GDEJREvUG3iHuawrH2p5ATTHnFc/Q==}
     engines: {node: '>=16.17.0'}
+    deprecated: Regression with `wrangler secret list --format json` emitting non-JSON characters. Downgrade to 3.107.3
     hasBin: true
     peerDependencies:
       '@cloudflare/workers-types': ^4.20250204.0

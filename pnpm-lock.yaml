@@ -146,6 +146,9 @@ importers:
       '@remix-run/cloudflare-pages':
         specifier: ^1.19.3
         version: 1.19.3(@cloudflare/workers-types@4.20250204.0)
+      '@remix-run/dev':
+        specifier: ^1.19.3
+        version: 1.19.3(@types/node@22.13.1)(sass-embedded@1.83.4)
       '@remix-run/netlify':
         specifier: ^1.19.3
         version: 1.19.3(@netlify/functions@1.6.0)
@@ -315,9 +318,6 @@ importers:
       '@iconify/types':
         specifier: ^2.0.0
         version: 2.0.0
-      '@remix-run/dev':
-        specifier: ^1.19.3
-        version: 1.19.3(@types/node@22.13.1)(sass-embedded@1.83.4)
       '@testing-library/jest-dom':
         specifier: ^6.6.3
         version: 6.6.3

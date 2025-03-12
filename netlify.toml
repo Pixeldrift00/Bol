@@ -2,7 +2,6 @@
   command = "pnpm install && pnpm run build"
   publish = "public"
   node_bundler = "esbuild"
-  edge_functions = "true"
 
 [dev]
   command = "pnpm run dev"
@@ -12,6 +11,7 @@
 [functions]
   directory = "functions"
   node_bundler = "esbuild"
+  included_files = ["build/server/**/*"]
 
 [[redirects]]
   from = "/api/*"

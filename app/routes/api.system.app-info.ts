@@ -1,5 +1,5 @@
-import type { ActionFunctionArgs, LoaderFunction } from '@remix-run/cloudflare';
-import { json } from '@remix-run/cloudflare';
+import type { ActionFunction, LoaderFunction } from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { execSync } from 'child_process';
 
 // These are injected by Vite at build time
@@ -110,7 +110,7 @@ export const loader: LoaderFunction = async ({ request: _request }) => {
   }
 };
 
-export const action = async ({ request: _request }: ActionFunctionArgs) => {
+export const action: ActionFunction = async ({ request: _request }) => {
   try {
     return json(getAppResponse());
   } catch (error) {

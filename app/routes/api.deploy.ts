@@ -1,4 +1,5 @@
-import { type ActionFunctionArgs, json } from '@remix-run/cloudflare';
+import { json } from '@remix-run/node';
+import type { ActionFunction } from '@remix-run/node';
 import crypto from 'crypto';
 import type { NetlifySiteInfo } from '~/types/netlify';
 
@@ -8,7 +9,7 @@ interface DeployRequestBody {
   chatId: string;
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Parameters<ActionFunction>[0]) {
   try {
     const { siteId, files, token, chatId } = (await request.json()) as DeployRequestBody & { token: string };
 

@@ -1,6 +1,6 @@
-import { cloudflareDevProxyVitePlugin as remixCloudflareDevProxy, vitePlugin as remixVitePlugin } from '@remix-run/dev';
 import UnoCSS from 'unocss/vite';
 import { defineConfig, type ViteDevServer } from 'vite';
+import react from '@vitejs/plugin-react';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { optimizeCssModules } from 'vite-plugin-optimize-css-modules';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -97,15 +97,35 @@ export default defineConfig((config) => {
       nodePolyfills({
         include: ['path', 'buffer', 'process'],
       }),
-      config.mode !== 'test' && remixCloudflareDevProxy(),
-      remixVitePlugin({
-        future: {
-          v3_fetcherPersist: true,
-          v3_relativeSplatPath: true,
-          v3_throwAbortReason: true,
-          v3_lazyRouteDiscovery: true,
+      react(),
+      {
+        name: 'remix-vite-plugin',
+        config() {
+          return {
+            // Configure Remix options
+            build: {
+              rollupOptions: {
+                external: ['@remix-run/dev/server-build'],
+              },
+            },
+            optimizeDeps: {
+              include: ['@remix-run/react'],
+            },
+            resolve: {
+              dedupe: ['react', 'react-dom'],
+            },
+          };
         },
-      }),
+        // Instead of using remix.config which doesn't exist, we'll use
+        // environment variables to configure Remix's future flags
+        configResolved() {
+          // Set environment variables for Remix future flags
+          process.env.REMIX_FUTURE_V3_FETCHER_PERSIST = 'true';
+          process.env.REMIX_FUTURE_V3_RELATIVE_SPLAT_PATH = 'true';
+          process.env.REMIX_FUTURE_V3_THROW_ABORT_REASON = 'true';
+          process.env.REMIX_FUTURE_V3_LAZY_ROUTE_DISCOVERY = 'true';
+        },
+      },
       UnoCSS(),
       tsconfigPaths(),
       chrome129IssuePlugin(),

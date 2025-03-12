@@ -1,17 +1,17 @@
-import { type ActionFunctionArgs } from '@remix-run/cloudflare';
+import { type ActionFunction } from '@remix-run/node';
 import { streamText } from '~/lib/.server/llm/stream-text';
 import { stripIndents } from '~/utils/stripIndent';
 import type { ProviderInfo } from '~/types/model';
 import { getApiKeysFromCookie, getProviderSettingsFromCookie } from '~/lib/api/cookies';
 import { createScopedLogger } from '~/utils/logger';
 
-export async function action(args: ActionFunctionArgs) {
+export async function action(args: Parameters<ActionFunction>[0]) {
   return enhancerAction(args);
 }
 
 const logger = createScopedLogger('api.enhancher');
 
-async function enhancerAction({ context, request }: ActionFunctionArgs) {
+async function enhancerAction({ context, request }: Parameters<ActionFunction>[0]) {
   const { message, model, provider } = await request.json<{
     message: string;
     model: string;
@@ -77,7 +77,7 @@ async function enhancerAction({ context, request }: ActionFunctionArgs) {
           `,
         },
       ],
-      env: context.cloudflare?.env as any,
+      env: (context as any).netlify?.env || process.env,
       apiKeys,
       providerSettings,
       options: {

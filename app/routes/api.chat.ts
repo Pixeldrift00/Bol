@@ -1,4 +1,4 @@
-import { type ActionFunctionArgs } from '@remix-run/cloudflare';
+import { type ActionFunction } from '@remix-run/node';
 import { createDataStream, generateId } from 'ai';
 import { MAX_RESPONSE_SEGMENTS, MAX_TOKENS, type FileMap } from '~/lib/.server/llm/constants';
 import { CONTINUE_PROMPT } from '~/lib/common/prompts/prompts';
@@ -12,7 +12,7 @@ import { WORK_DIR } from '~/utils/constants';
 import { createSummary } from '~/lib/.server/llm/create-summary';
 import { extractPropertiesFromMessage } from '~/lib/.server/llm/utils';
 
-export async function action(args: ActionFunctionArgs) {
+export async function action(args: Parameters<ActionFunction>[0]) {
   return chatAction(args);
 }
 
@@ -36,7 +36,7 @@ function parseCookies(cookieHeader: string): Record<string, string> {
   return cookies;
 }
 
-async function chatAction({ context, request }: ActionFunctionArgs) {
+async function chatAction({ context, request }: Parameters<ActionFunction>[0]) {
   const { messages, files, promptId, contextOptimization } = await request.json<{
     messages: Messages;
     files: any;
@@ -92,7 +92,7 @@ async function chatAction({ context, request }: ActionFunctionArgs) {
 
           summary = await createSummary({
             messages: [...messages],
-            env: context.cloudflare?.env,
+            env: (context as any).netlify?.env || process.env, // Update to use Netlify context
             apiKeys,
             providerSettings,
             promptId,
@@ -134,7 +134,7 @@ async function chatAction({ context, request }: ActionFunctionArgs) {
           console.log(`Messages count: ${messages.length}`);
           filteredFiles = await selectContext({
             messages: [...messages],
-            env: context.cloudflare?.env,
+            env: (context as any).netlify?.env || process.env, // Update from cloudflare to netlify
             apiKeys,
             files,
             providerSettings,
@@ -232,7 +232,7 @@ async function chatAction({ context, request }: ActionFunctionArgs) {
 
             const result = await streamText({
               messages,
-              env: context.cloudflare?.env,
+              env: (context as any).netlify?.env || process.env,
               options,
               apiKeys,
               files,
@@ -271,7 +271,7 @@ async function chatAction({ context, request }: ActionFunctionArgs) {
 
         const result = await streamText({
           messages,
-          env: context.cloudflare?.env,
+          env: (context as any).netlify?.env || process.env,
           options,
           apiKeys,
           files,

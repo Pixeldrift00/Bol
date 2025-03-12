@@ -1,6 +1,6 @@
-import type { LoaderFunctionArgs } from '@remix-run/node';
+import type { LoaderFunction } from '@remix-run/node';
 
-export const loader = async ({ request: _request }: LoaderFunctionArgs) => {
+export const loader = async ({ request: _request }: Parameters<LoaderFunction>[0]) => {
   // Return a simple 200 OK response with some basic health information
   return new Response(
     JSON.stringify({

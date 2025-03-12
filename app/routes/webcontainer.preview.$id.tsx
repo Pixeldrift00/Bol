@@ -1,10 +1,10 @@
-import { json, type LoaderFunctionArgs } from '@remix-run/cloudflare';
+import { json, type LoaderFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const PREVIEW_CHANNEL = 'preview-updates';
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Parameters<LoaderFunction>[0]) {
   const previewId = params.id;
 
   if (!previewId) {

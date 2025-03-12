@@ -7,8 +7,6 @@ interface TitleProps {
 
 export function Title({ className = '' }: TitleProps) {
   return (
-    <span className={`${styles.title} ${className}`}>
-      Bol
-    </span>
+    <span className={`${styles.title} ${className}`}>Bol</span>
   );
 }

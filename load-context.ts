@@ -1,9 +1,9 @@
 import { type PlatformProxy } from 'wrangler';
 
-type Cloudflare = Omit<PlatformProxy<Env>, 'dispose'>;
+type Netlify = Omit<PlatformProxy<Env>, 'dispose'>;
 
-declare module '@remix-run/cloudflare' {
+declare module '@remix-run/netlify' {
   interface AppLoadContext {
-    cloudflare: Cloudflare;
+    netlify: Netlify;
   }
 }

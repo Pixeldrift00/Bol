@@ -9,7 +9,7 @@ module.exports = {
     // Command to execute before the build
     command: "pnpm run build",
     // Directory to publish (output of the build)
-    publish: "build/client",
+    publish: "public",
     // Environment variables to be set during build
     environment: {
       NODE_VERSION: "18.18.0",

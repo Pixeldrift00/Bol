@@ -8,7 +8,7 @@
   "version": "0.0.7",
   "scripts": {
     "deploy": "npm run build && wrangler pages deploy",
-    "build": "remix vite:build",
+    "build": "remix vite:build && cp -r build/client/* public/",
     "dev": "node pre-start.cjs  && remix vite:dev",
     "test": "vitest --run",
     "test:watch": "vitest",
@@ -78,6 +78,7 @@
     "@remix-run/cloudflare-pages": "^2.15.2",
     "@remix-run/node": "^2.15.2",
     "@remix-run/react": "^2.15.2",
+    "@remix-run/netlify": "^2.15.2",
     "@tanstack/react-virtual": "^3.13.0",
     "@types/react-beautiful-dnd": "^13.1.8",
     "@uiw/codemirror-theme-vscode": "^4.23.6",

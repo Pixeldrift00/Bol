@@ -109,11 +109,14 @@ export default defineConfig((config) => {
     },
     plugins: [
       {
-        name: 'copy-package-json',
-        writeBundle() {
-          // Copy package.json to build output
-          require('fs').copyFileSync('package.json', 'build/package.json');
-        },
+        name: 'handle-package-json',
+        generateBundle() {
+          this.emitFile({
+            type: 'asset',
+            fileName: 'package.json',
+            source: readFileSync('package.json', 'utf-8')
+          });
+        }
       },
       nodePolyfills({
         include: ['path', 'buffer', 'process'],

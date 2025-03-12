@@ -1,5 +1,5 @@
 import { useStore } from '@nanostores/react';
-import type { LinksFunction } from '@remix-run/cloudflare';
+import type { LinksFunction } from '@remix-run/node'; // Change from cloudflare to node
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
 import tailwindReset from '@unocss/reset/tailwind-compat.css?url';
 import { themeStore } from './lib/stores/theme';
@@ -100,3 +100,15 @@ export default function App() {
     </Layout>
   );
 }
+
+
+// Add this export to enable v2 future flags
+export const future = {
+  v2_errorBoundary: true,
+  v2_normalizeFormMethod: true,
+  v2_meta: true,
+  v2_headers: true,
+  unstable_cssModules: true,
+  unstable_cssSideEffectImports: true,
+  unstable_vanillaExtract: true,
+};

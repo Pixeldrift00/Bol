@@ -1,14 +1,16 @@
 [build]
-  command = "pnpm run build"
-  publish = "build/client"
+  command = "pnpm install && pnpm run build"
+  publish = "build"
   node_bundler = "esbuild"
   base = "/"
+  
 
 [build.environment]
   NODE_VERSION = "20.15.1"
   PNPM_VERSION = "9.4.0"
   NPM_FLAGS = "--version"
   NODE_OPTIONS = "--max_old_space_size=4096"
+  DISABLE_CACHE = true
 
 [dev]
   command = "pnpm run dev"
@@ -17,7 +19,8 @@
 
 [functions]
   directory = "functions"
-  included_files = ["build/server/**/*", "build/client/**/*", "package.json"]
+  included_files = ["build/server/**/*", "build/client/**/*"]
+  node_bundler = "esbuild"
 
 [[redirects]]
   from = "/@app/*"
@@ -33,7 +36,7 @@
 
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/path-handler"
+  to = "/index.html"
   status = 200
 
 [[headers]]

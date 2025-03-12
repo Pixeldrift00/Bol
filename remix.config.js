@@ -1,8 +1,9 @@
 /** @type {import('@remix-run/dev').AppConfig} */
 module.exports = {
   ignoredRouteFiles: ["**/.*"],
-  serverModuleFormat: "esm", // Change to esm, newer
-  serverBuildTarget: "netlify", // Add Netlify as the build target
+  serverModuleFormat: "esm",
+  serverBuildTarget: "netlify",
+  server: "./server.js",
   future: {
     v2_dev: true,
     v2_errorBoundary: true,
@@ -13,27 +14,8 @@ module.exports = {
   },
   routes(defineRoutes) {
     return defineRoutes((route) => {
-      // Define explicit route mapping for paths
-      route("/app/*", "routes/$1.tsx");
+      route("/@app/*", "routes/$1.tsx");
+      route("/api/*", "routes/api.$1.tsx");
     });
-  },
-  serverDependenciesToBundle: [
-    /^marked.*/,
-    /^rehype.*/,
-    /^remark.*/,
-    /^unified.*/,
-    /^unist.*/,
-    /^hast.*/,
-    /^bail.*/,
-    /^trough.*/,
-    /^mdast.*/,
-    /^micromark.*/,
-    /^decode.*/,
-    /^character.*/,
-    /^property.*/,
-    /^space.*/,
-    /^comma.*/,
-    /^react-markdown$/,
-    /^vfile.*/,
-  ]
+  }
 };

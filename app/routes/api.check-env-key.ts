@@ -10,9 +10,10 @@ export const loader: LoaderFunction = async ({ context, request }) => {
   }
 
   const envVarName = providerBaseUrlEnvKeys[provider].apiTokenKey;
+  const netlifyContext = context as { env: Record<string, string> };
 
-  // Update to use Netlify context instead of Cloudflare
-  const isSet = !!(process.env[envVarName] || (context as any)?.[envVarName]);
+  // Check both process.env and Netlify context
+  const isSet = !!(netlifyContext.env[envVarName] || process.env[envVarName]);
 
   return Response.json({ isSet });
 };

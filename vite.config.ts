@@ -8,8 +8,14 @@ import * as dotenv from 'dotenv';
 import { execSync } from 'child_process';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 dotenv.config();
+
+// Get __dirname equivalent in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Get detailed git info with fallbacks
 const getGitInfo = () => {
@@ -43,105 +49,19 @@ const getGitInfo = () => {
 // Read package.json with detailed dependency info
 const getPackageJson = () => {
   try {
-    const possiblePaths = [
-      // Current and parent directories
-      join(process.cwd(), 'package.json'),
-      join(__dirname, 'package.json'),
-      join(__dirname, '../package.json'),
-      join(process.cwd(), '../package.json'),
-      
-      // Docker paths
-      '/app/package.json',
-      '/app/build/package.json',
-      '/workspace/package.json',
-      
-      // Netlify paths
-      '/.netlify/functions/package.json',
-      join(process.env.LAMBDA_TASK_ROOT || '', 'package.json'),
-      
-      // Build directories
-      './build/package.json',
-      '../build/package.json',
-      './dist/package.json',
-      
-      // Absolute paths from root
-      '/var/task/package.json',
-      '/opt/build/repo/package.json',
-      
-      // Windows-style paths
-      'C:\\app\\package.json',
-      'D:\\app\\package.json',
-      
-      // Additional common locations
-      './functions/package.json',
-      './server/package.json',
-      './client/package.json'
-    ];
-
-    // Add environment-specific paths
-    if (process.env.PROJECT_ROOT) {
-      possiblePaths.push(join(process.env.PROJECT_ROOT, 'package.json'));
-    }
-
-    // Add paths from environment variables
-    Object.entries(process.env).forEach(([key, value]) => {
-      if (value && (key.includes('PATH') || key.includes('DIR'))) {
-        possiblePaths.push(join(value, 'package.json'));
-      }
-    });
-
-    let lastError;
-    for (const pkgPath of possiblePaths) {
-      try {
-        const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
-        console.log(`Successfully loaded package.json from: ${pkgPath}`);
-        return {
-          name: pkg.name,
-          description: pkg.description,
-          license: pkg.license,
-          dependencies: pkg.dependencies || {},
-          devDependencies: pkg.devDependencies || {},
-          peerDependencies: pkg.peerDependencies || {},
-          optionalDependencies: pkg.optionalDependencies || {},
-        };
-      } catch (error) {
-        lastError = error;
-        console.debug(`Failed to load package.json from ${pkgPath}: ${(error as Error).message}`);
-      }
-    }
-
-    // If all paths fail, try searching recursively up the directory tree
-    let currentDir = process.cwd();
-    while (currentDir !== join(currentDir, '..')) {
-      try {
-        const pkgPath = join(currentDir, 'package.json');
-        const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
-        console.log(`Successfully loaded package.json from recursive search: ${pkgPath}`);
-        return {
-          name: pkg.name,
-          description: pkg.description,
-          license: pkg.license,
-          dependencies: pkg.dependencies || {},
-          devDependencies: pkg.devDependencies || {},
-          peerDependencies: pkg.peerDependencies || {},
-          optionalDependencies: pkg.optionalDependencies || {},
-        };
-      } catch {
-        currentDir = join(currentDir, '..');
-      }
-    }
-
-    throw lastError || new Error('No package.json found in any location');
-  } catch {
+    const pkg = JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf-8'));
     return {
-      name: 'bolt.diy',
-      description: 'A DIY LLM interface',
-      license: 'MIT',
-      dependencies: {},
-      devDependencies: {},
-      peerDependencies: {},
-      optionalDependencies: {},
+      name: pkg.name,
+      description: pkg.description,
+      license: pkg.license,
+      dependencies: pkg.dependencies || {},
+      devDependencies: pkg.devDependencies || {},
+      peerDependencies: pkg.peerDependencies || {},
+      optionalDependencies: pkg.optionalDependencies || {},
     };
+  } catch (error) {
+    console.error('Error reading package.json:', error);
+    throw error;
   }
 };
 

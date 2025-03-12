@@ -1,0 +1,2 @@
+/api/*  /.netlify/functions/path-handler  200
+/*      /index.html                    200

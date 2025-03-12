@@ -43,18 +43,41 @@ const getGitInfo = () => {
 // Read package.json with detailed dependency info
 const getPackageJson = () => {
   try {
-    const pkgPath = join(process.cwd(), 'package.json');
-    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+    // Try multiple possible locations in order
+    const possiblePaths = [
+      join(process.cwd(), 'package.json'),
+      join(__dirname, 'package.json'),
+      join(__dirname, '../package.json'),
+      join(process.cwd(), '../package.json'),
+      // Docker specific paths
+      '/app/package.json',
+      '/app/build/package.json',
+      // Netlify function paths
+      '/.netlify/functions/package.json',
+      join(process.env.LAMBDA_TASK_ROOT || '', 'package.json')
+    ];
 
-    return {
-      name: pkg.name,
-      description: pkg.description,
-      license: pkg.license,
-      dependencies: pkg.dependencies || {},
-      devDependencies: pkg.devDependencies || {},
-      peerDependencies: pkg.peerDependencies || {},
-      optionalDependencies: pkg.optionalDependencies || {},
-    };
+    let lastError;
+    for (const pkgPath of possiblePaths) {
+      try {
+        const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+        console.log(`Successfully loaded package.json from: ${pkgPath}`);
+        return {
+          name: pkg.name,
+          description: pkg.description,
+          license: pkg.license,
+          dependencies: pkg.dependencies || {},
+          devDependencies: pkg.devDependencies || {},
+          peerDependencies: pkg.peerDependencies || {},
+          optionalDependencies: pkg.optionalDependencies || {},
+        };
+      } catch (error) {
+        lastError = error;
+        console.debug(`Failed to load package.json from ${pkgPath}: ${(error as Error).message}`);
+      }
+    }
+
+    throw lastError || new Error('No package.json found in any location');
   } catch {
     return {
       name: 'bolt.diy',

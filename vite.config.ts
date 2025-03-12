@@ -92,12 +92,16 @@ export default defineConfig((config) => {
       rollupOptions: {
         input: {
           app: './index.html',
+          // Add package.json as an input
+          pkg: './package.json'
         },
+        // Preserve package.json during build
+        preserveEntrySignatures: 'strict',
       },
     },
     plugins: [
       nodePolyfills({
-        include: ['path', 'buffer', 'process'],
+        include: ['path', 'buffer', 'process', 'fs'],  // Add 'fs' for package.json reading
       }),
       react(),
       {

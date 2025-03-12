@@ -11,6 +11,12 @@ module.exports = {
     v2_normalizeFormMethod: true,
     v2_routeConvention: true,
   },
+  routes(defineRoutes) {
+    return defineRoutes((route) => {
+      // Define explicit route mapping for @app paths
+      route("/app/*", "routes/$1.tsx");
+    });
+  },
   serverDependenciesToBundle: [
     /^marked.*/,
     /^rehype.*/,

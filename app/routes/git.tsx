@@ -14,7 +14,7 @@ export const loader: LoaderFunction = async ({ params }) => {
 export const meta: MetaFunction = () => {
   return {
     title: 'Git Operations',
-    description: 'Manage your Git repository'
+    description: 'Manage your Git repository',
   };
 };
 

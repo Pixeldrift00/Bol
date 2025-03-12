@@ -67,7 +67,7 @@ async function llmCallAction({ context, request }: Parameters<ActionFunction>[0]
             content: `${message}`,
           },
         ],
-        env: (context as any).netlify?.env || process.env, 
+        env: (context as any).netlify?.env || process.env,
         apiKeys,
         providerSettings,
       });
@@ -95,10 +95,10 @@ async function llmCallAction({ context, request }: Parameters<ActionFunction>[0]
     }
   } else {
     try {
-      const models = await getModelList({ 
-        apiKeys, 
-        providerSettings, 
-        serverEnv: (context as any).netlify?.env || process.env 
+      const models = await getModelList({
+        apiKeys,
+        providerSettings,
+        serverEnv: (context as any).netlify?.env || process.env,
       });
       const modelDetails = models.find((m: ModelInfo) => m.name === model);
 

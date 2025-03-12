@@ -10,7 +10,7 @@ export const loader: LoaderFunction = async ({ context, request }) => {
   }
 
   const envVarName = providerBaseUrlEnvKeys[provider].apiTokenKey;
-  
+
   // Update to use Netlify context instead of Cloudflare
   const isSet = !!(process.env[envVarName] || (context as any)?.[envVarName]);
 

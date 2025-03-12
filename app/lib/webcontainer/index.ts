@@ -27,6 +27,8 @@ if (!import.meta.env.SSR) {
           coep: 'credentialless',
           workdirName: WORK_DIR_NAME,
           forwardPreviewErrors: true, // Enable error forwarding from iframes
+          serviceWorkerPath: '/webcontainer-sw.js',
+          corsOrigin: '*', // Allow cross-origin requests in Netlify environment
         });
       })
       .then(async (webcontainer) => {

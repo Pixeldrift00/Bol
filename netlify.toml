@@ -1,5 +1,5 @@
 [build]
-  command = "pnpm install && node pre-start.cjs && pnpm run build"
+  command = "pnpm run build"
   publish = "build/client"
   node_bundler = "esbuild"
   base = "/"

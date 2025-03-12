@@ -4,6 +4,7 @@ import { chatStore } from '~/lib/stores/chat';
 import { classNames } from '~/utils/classNames';
 import { HeaderActionButtons } from './HeaderActionButtons.client';
 import { ChatDescription } from '~/lib/persistence/ChatDescription.client';
+import { Title } from '~/components/ui/Title';
 
 export function Header() {
   const chat = useStore(chatStore);
@@ -18,9 +19,8 @@ export function Header() {
       <div className="flex items-center gap-2 z-logo text-bolt-elements-textPrimary cursor-pointer">
         <div className="i-ph:sidebar-simple-duotone text-xl" />
         <a href="/" className="text-2xl font-semibold text-accent flex items-center">
-          {/* <span className="i-bolt:logo-text?mask w-[46px] inline-block" /> */}
-          <img src="/bol-logo-light.svg" alt="Bol" className="w-[90px] inline-block dark:hidden" />
-          <img src="/bol-logo-dark.svg" alt="Bol" className="w-[90px] inline-block hidden dark:block" />
+          {/* Replacing the SVG images with our new Title component */}
+          <Title />
         </a>
       </div>
       {chat.started && ( // Display ChatDescription and HeaderActionButtons only when the chat has started.

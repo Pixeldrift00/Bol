@@ -2,7 +2,7 @@
   command = "pnpm install && pnpm run build"
   publish = "build/client"
   node_bundler = "esbuild"
-  edge_functions = true
+  edge_functions = "true"
 
 [dev]
   command = "pnpm run dev"

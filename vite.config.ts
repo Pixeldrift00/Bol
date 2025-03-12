@@ -91,12 +91,8 @@ export default defineConfig((config) => {
       target: 'esnext',
       rollupOptions: {
         input: {
-          app: './index.html',
-          // Add package.json as an input
-          pkg: './package.json'
-        },
-        // Preserve package.json during build
-        preserveEntrySignatures: 'strict',
+          app: './index.html'
+        }
       },
     },
     plugins: [

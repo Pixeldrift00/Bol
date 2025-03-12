@@ -2,7 +2,7 @@
   command = "pnpm install && pnpm run build"
   publish = "build"
   node_bundler = "esbuild"
-  base = "/"
+  base = "."
   
 
 [build.environment]
@@ -19,8 +19,7 @@
 
 [functions]
   directory = "functions"
-  included_files = ["build/server/**/*", "build/client/**/*"]
-  node_bundler = "esbuild"
+  included_files = ["build/server/**/*", "build/client/**/*", "/*"]
 
 [[redirects]]
   from = "/@app/*"

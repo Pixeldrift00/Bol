@@ -5,7 +5,6 @@ export const IGNORE_PATTERNS = [
   'node_modules/**',
   '.git/**',
   'dist/**',
-  'build/**',
   '.next/**',
   'coverage/**',
   '.cache/**',

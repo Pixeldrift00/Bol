@@ -17,7 +17,6 @@ const IGNORE_PATTERNS = [
   '.github/**',
   '.vscode/**',
   'dist/**',
-  'build/**',
   '.next/**',
   'coverage/**',
   '.cache/**',

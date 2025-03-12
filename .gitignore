@@ -24,7 +24,10 @@ dist-ssr
 
 /.history
 /.cache
-/build
+/build/**/*.cache
+/build/**/*.temp
+/build/**/*.log
+!/build/package.json
 .env.local
 .env
 .dev.vars

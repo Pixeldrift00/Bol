@@ -1,7 +1,7 @@
 /** @type {import('@remix-run/dev').AppConfig} */
 module.exports = {
   ignoredRouteFiles: ["**/.*"],
-  serverModuleFormat: "esm", // Change to CommonJS for better Netlify compatibility
+  serverModuleFormat: "esm", // Change to esm, newer
   serverBuildTarget: "netlify", // Add Netlify as the build target
   future: {
     v2_dev: true,
@@ -13,7 +13,7 @@ module.exports = {
   },
   routes(defineRoutes) {
     return defineRoutes((route) => {
-      // Define explicit route mapping for @app paths
+      // Define explicit route mapping for paths
       route("/app/*", "routes/$1.tsx");
     });
   },

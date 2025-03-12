@@ -1,6 +1,5 @@
 [build]
-  base = "/"
-  command = "pnpm install && pnpm run build"
+  command = "cp package.json build/ && pnpm install && pnpm run build"
   publish = "build/client"
   node_bundler = "esbuild"
 
@@ -9,7 +8,6 @@
   PNPM_VERSION = "9.4.0"
   NPM_FLAGS = "--version"
   NODE_OPTIONS = "--max_old_space_size=4096"
-  NETLIFY_BUILD_BASE = "/opt/build/repo"
 
 [dev]
   command = "pnpm run dev"
@@ -19,7 +17,7 @@
 [functions]
   directory = "functions"
   node_bundler = "esbuild"
-  included_files = ["build/server/**/*", "package.json"]
+  included_files = ["build/server/**/*", "build/client/**/*", "package.json"]
 
 [[redirects]]
   from = "/api/*"

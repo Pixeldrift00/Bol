@@ -92,8 +92,29 @@ export default defineConfig((config) => {
     },
     build: {
       target: 'esnext',
+      rollupOptions: {
+        input: {
+          // Ensure package.json is included
+          app: './index.html',
+        },
+        output: {
+          assetFileNames: (assetInfo) => {
+            if (assetInfo.name === 'package.json') {
+              return 'package.json';
+            }
+            return 'assets/[name]-[hash][extname]';
+          },
+        },
+      },
     },
     plugins: [
+      {
+        name: 'copy-package-json',
+        writeBundle() {
+          // Copy package.json to build output
+          require('fs').copyFileSync('package.json', 'build/package.json');
+        },
+      },
       nodePolyfills({
         include: ['path', 'buffer', 'process'],
       }),

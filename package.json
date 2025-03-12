@@ -8,8 +8,8 @@
   "version": "0.0.7",
   "scripts": {
     "deploy": "npm run build && wrangler pages deploy",
-    "build": "NODE_OPTIONS=\"--max-old-space-size=4096\" REMIX_ROOT=\"/\" remix vite:build",
-    "dev": "REMIX_ROOT=\"/\" node pre-start.cjs && remix vite:dev",
+    "build": "remix vite:build",
+    "dev": "node pre-start.cjs && remix vite:dev",
     "test": "vitest --run",
     "test:watch": "vitest",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint app",

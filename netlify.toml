@@ -1,8 +1,15 @@
 [build]
   base = "/"
-  command = "npm install -g pnpm && pnpm install && pnpm run build"
+  command = "pnpm install && pnpm run build"
   publish = "build/client"
   node_bundler = "esbuild"
+
+[build.environment]
+  NODE_VERSION = "20.15.1"
+  PNPM_VERSION = "9.4.0"
+  NPM_FLAGS = "--version"
+  NODE_OPTIONS = "--max_old_space_size=4096"
+  NETLIFY_BUILD_BASE = "/opt/build/repo"
 
 [dev]
   command = "pnpm run dev"
@@ -12,7 +19,7 @@
 [functions]
   directory = "functions"
   node_bundler = "esbuild"
-  included_files = ["build/server/**/*"]
+  included_files = ["build/server/**/*", "package.json"]
 
 [[redirects]]
   from = "/api/*"
@@ -24,12 +31,6 @@
   from = "/*"
   to = "/.netlify/functions/path-handler"
   status = 200
-
-[build.environment]
-  NODE_VERSION = "20.15.1"
-  NPM_FLAGS = "--version"
-  PNPM_VERSION = "9.4.0"
-  NODE_OPTIONS = "--max_old_space_size=4096"
 
 [[headers]]
   for = "/*"

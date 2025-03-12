@@ -1,6 +1,6 @@
 [build]
   command = "pnpm install && pnpm run build"
-  publish = "public"
+  publish = "build/client"
   node_bundler = "esbuild"
 
 [dev]

@@ -100,30 +100,26 @@ export default defineConfig((config) => {
       react(),
       {
         name: 'remix-vite-plugin',
+        configResolved() {
+          process.env.REMIX_FUTURE_V3_FETCHER_PERSIST = 'true';
+          process.env.REMIX_FUTURE_V3_RELATIVE_SPLAT_PATH = 'true';
+          process.env.REMIX_FUTURE_V3_THROW_ABORT_REASON = 'true';
+          process.env.REMIX_FUTURE_V3_LAZY_ROUTE_DISCOVERY = 'true';
+        },
         config() {
           return {
-            // Configure Remix options
             build: {
               rollupOptions: {
-                external: ['@remix-run/dev/server-build'],
+                external: ['@remix-run/node', '@remix-run/netlify'],
               },
             },
             optimizeDeps: {
-              include: ['@remix-run/react'],
+              include: ['@remix-run/react', '@remix-run/node'],
             },
             resolve: {
               dedupe: ['react', 'react-dom'],
             },
           };
-        },
-        // Instead of using remix.config which doesn't exist, we'll use
-        // environment variables to configure Remix's future flags
-        configResolved() {
-          // Set environment variables for Remix future flags
-          process.env.REMIX_FUTURE_V3_FETCHER_PERSIST = 'true';
-          process.env.REMIX_FUTURE_V3_RELATIVE_SPLAT_PATH = 'true';
-          process.env.REMIX_FUTURE_V3_THROW_ABORT_REASON = 'true';
-          process.env.REMIX_FUTURE_V3_LAZY_ROUTE_DISCOVERY = 'true';
         },
       },
       UnoCSS(),

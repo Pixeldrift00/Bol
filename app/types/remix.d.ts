@@ -6,3 +6,5 @@ declare module '@remix-run/node' {
     netlify: Context;
   }
 }
+
+export {};

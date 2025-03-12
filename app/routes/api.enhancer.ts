@@ -12,12 +12,12 @@ export async function action(args: Parameters<ActionFunction>[0]) {
 const logger = createScopedLogger('api.enhancher');
 
 async function enhancerAction({ context, request }: Parameters<ActionFunction>[0]) {
-  const { message, model, provider } = await request.json<{
+  const { message, model, provider } = (await request.json()) as {
     message: string;
     model: string;
     provider: ProviderInfo;
     apiKeys?: Record<string, string>;
-  }>();
+  };
 
   const { name: providerName } = provider;
 

@@ -229,68 +229,47 @@ function viteCommonJsTypeFixPlugin() {
   return {
     name: 'vite-commonjs-type-fix',
     configResolved(config: import('vite').ResolvedConfig) {
-      // Find the commonjs resolver plugin
       const plugins = config.plugins || [];
       for (const plugin of plugins) {
         if (plugin && plugin.name === 'commonjs--resolver') {
-          // Monkey patch the resolveId method to add type checking
-          const originalResolveId = plugin.resolveId;
+          // Patch resolveId
+          const originalResolveId = (plugin as any).resolveId;
           if (originalResolveId) {
-            plugin.resolveId = function(id, ...args) {
-              // Handle non-string ids by returning null
-              if (id === null || id === undefined || typeof id !== 'string') {
-                console.log('Intercepted non-string ID in commonjs--resolver:', id);
-                return null;
-              }
-              // Only proceed with string ids
+            plugin.resolveId = function(id: any, ...args: any[]) {
+              // Ensure id is a string and handle null/undefined
+              if (id == null) return null;
+              const stringId = String(id);
+              
               try {
-                return typeof originalResolveId === 'function' ? originalResolveId.call(this, id, ...args) : originalResolveId.handler.call(this, id, ...args);
+                return typeof originalResolveId === 'function' 
+                  ? originalResolveId.call(this, stringId, ...args) 
+                  : originalResolveId.handler.call(this, stringId, ...args);
               } catch (error) {
-                console.error('Error in commonjs--resolver resolveId:', error);
+                console.warn('CommonJS resolver error:', error);
                 return null;
               }
             };
           }
           
-          // Also patch the load method if it exists
-          const originalLoad = plugin.load;
-          if (originalLoad) {
-            plugin.load = function(id, ...args) {
-              // Handle non-string ids
-              if (id === null || id === undefined || typeof id !== 'string') {
-                return null;
-              }
-              // Only proceed with string ids
-              try {
-                return typeof originalLoad === 'function' ? originalLoad.call(this, id, ...args) : originalLoad.handler.call(this, id, ...args);
-              } catch (error) {
-                console.error('Error in commonjs--resolver load:', error);
-                return null;
-              }
-            };
-          }
-          
-          // Patch transform method if it exists
-          const originalTransform = plugin.transform;
-          if (originalTransform) {
-            plugin.transform = function(code, id, ...args) {
-              // Handle non-string ids
-              if (id === null || id === undefined || typeof id !== 'string') {
-                return null;
-              }
-              // Only proceed with string ids and valid code
-              if (typeof code !== 'string') {
-                console.log('Intercepted non-string code in commonjs--resolver transform');
-                return null;
-              }
-              try {
-                return typeof originalTransform === 'function' ? originalTransform.call(this, code, id, ...args) : originalTransform.handler.call(this, code, id, ...args);
-              } catch (error) {
-                console.error('Error in commonjs--resolver transform:', error);
-                return null;
-              }
-            };
-          }
+          // Also ensure the plugin's other methods handle non-string IDs
+          ['load', 'transform'].forEach(method => {
+            const original = (plugin as Record<string, any>)[method];
+            if (original) {
+              (plugin as any)[method] = function(id: any, ...args: any[]) {
+                if (id == null) return null;
+                const stringId = String(id);
+                
+                try {
+                  return typeof original === 'function'
+                    ? original.call(this, stringId, ...args)
+                    : original.handler.call(this, stringId, ...args);
+                } catch (error) {
+                  console.warn(`CommonJS resolver ${method} error:`, error);
+                  return null;
+                }
+              };
+            }
+          });
         }
       }
     }

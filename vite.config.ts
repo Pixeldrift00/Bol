@@ -126,28 +126,45 @@ export default defineConfig((config) => {
           'path',
           'fs',
           'crypto'
-        ]
+        ],
+        output: {
+          format: 'esm'
+        }
       },
+      commonjsOptions: {
+        include: [/node_modules/],
+        transformMixedEsModules: true
+      }
     },
     optimizeDeps: {
       include: ['@remix-run/react'],
-      exclude: ['@remix-run/dev/server-build']
+      exclude: ['@remix-run/dev/server-build'],
+      esbuildOptions: {
+        target: 'esnext'
+      }
     },
     resolve: {
       dedupe: ['react', 'react-dom'],
-      preserveSymlinks: true
+      preserveSymlinks: true,
+      mainFields: ['module', 'main']
     },
     plugins: [
-      remix(),
+      remix({
+        ssr: true
+      }),
       nodePolyfills({
         include: ['path', 'buffer', 'process', 'fs'],
+        globals: {
+          process: true,
+          Buffer: true
+        }
       }),
       react(),
       UnoCSS(),
       tsconfigPaths(),
       chrome129IssuePlugin(),
-      config.mode === 'production' && optimizeCssModules({ apply: 'build' }),
-    ],
+      config.mode === 'production' && optimizeCssModules({ apply: 'build' })
+    ].filter(Boolean),
     envPrefix: [
       'VITE_',
       'OPENAI_LIKE_API_BASE_URL',

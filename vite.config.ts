@@ -116,6 +116,11 @@ export default defineConfig((config: ConfigEnv): UserConfig => {
     },
     build: {
       target: 'es2020',
+      commonjsOptions: {
+        include: [/node_modules/],
+        transformMixedEsModules: true,
+        requireReturnsDefault: 'namespace'
+      },
       rollupOptions: {
         input: {
           app: './index.html'
@@ -133,7 +138,12 @@ export default defineConfig((config: ConfigEnv): UserConfig => {
         output: {
           format: 'es'
         },
-        plugins: []
+        plugins: [],
+        onwarn(warning, warn) {
+          if (warning.code === 'MIXED_EXPORTS') return;
+          if (warning.code === 'CIRCULAR_DEPENDENCY') return;
+          warn(warning);
+        }
       }
     },
     optimizeDeps: {
@@ -147,7 +157,10 @@ export default defineConfig((config: ConfigEnv): UserConfig => {
       esbuildOptions: {
         target: 'es2020',
         format: 'esm',
-        platform: 'node'
+        platform: 'node',
+        supported: { 
+          'top-level-await': true 
+        }
       }
     },
     resolve: {

@@ -4,7 +4,11 @@ export default {
   serverModuleFormat: "esm",
   serverBuildTarget: "netlify",
   serverBuildPath: "build/server/index.js",
-  serverDependenciesToBundle: "all",
+  // Remove serverDependenciesToBundle: "all" and be more specific
+  serverDependenciesToBundle: [
+    // Bundle only what's needed for Netlify
+    /^(?!@remix-run\/netlify|@netlify).*/
+  ],
   server: "./server.js",
   future: {
     v2_errorBoundary: true,

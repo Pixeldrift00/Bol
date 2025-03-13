@@ -3,24 +3,26 @@ import { join } from 'path';
 
 async function preBuild() {
   try {
-    // Ensure directories exist
+    // Ensure all directories exist
     await mkdir(join(process.cwd(), 'build/client'), { recursive: true });
     await mkdir(join(process.cwd(), 'build/server'), { recursive: true });
+    await mkdir(join(process.cwd(), 'opt/build/repo'), { recursive: true });  // Add opt directory
     
-    // Copy package.json to necessary locations
-    await copyFile(
-      join(process.cwd(), 'package.json'),
-      join(process.cwd(), 'build/package.json')
-    );
-    
-    await copyFile(
-      join(process.cwd(), 'package.json'),
-      join(process.cwd(), 'build/client/package.json')
-    );
+    // Copy package.json to all necessary locations
+    const locations = [
+      'build/package.json',
+      'build/client/package.json',
+      'build/server/package.json',
+      'opt/build/repo/package.json'  // Add opt location
+    ];
 
-    await copyFile(
-      join(process.cwd(), 'package.json'),
-      join(process.cwd(), 'build/server/package.json')
+    await Promise.all(
+      locations.map(location =>
+        copyFile(
+          join(process.cwd(), 'package.json'),
+          join(process.cwd(), location)
+        )
+      )
     );
     
     console.log('Pre-build file copying completed successfully');

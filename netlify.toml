@@ -1,9 +1,9 @@
 [build]
-  command = "pnpm install && pnpm run build"
+  base = "/"
+  command = "cp package.json /opt/build/repo/ && pnpm install && pnpm run build"
   publish = "build/client"
   node_bundler = "esbuild"
   edge_functions = "true"
-  
 
 [build.environment]
   NODE_VERSION = "20.15.1"
@@ -11,18 +11,6 @@
   NPM_FLAGS = "--version"
   NODE_OPTIONS = "--max_old_space_size=4096"
 
-
-[[redirects]]
-  from = "/@app/*"
-  to = "/.netlify/functions/path-handler"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/path-handler"
-  status = 200
-  force = true
 
 [[redirects]]
   from = "/*"

@@ -7,25 +7,43 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import * as dotenv from 'dotenv';
 import { execSync } from 'child_process';
 import { readFileSync } from 'fs';
-import { join } from 'path';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 dotenv.config();
 
 function getPackageJson() {
   try {
-    // Use "./package.json" to match the watchPaths in remix.config.mjs
-    const pkgPath = join(process.cwd(), './package.json');
-    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
-    return {
-      name: pkg.name,
-      description: pkg.description,
-      license: pkg.license,
-      version: pkg.version,
-      dependencies: pkg.dependencies || {},
-      devDependencies: pkg.devDependencies || {},
-      peerDependencies: pkg.peerDependencies || {},
-      optionalDependencies: pkg.optionalDependencies || {},
-    };
+    // Try multiple possible locations
+    const possiblePaths = [
+      join(process.cwd(), 'package.json'),
+      join(__dirname, 'package.json'),
+      join(__dirname, '..', 'package.json'),
+      '/opt/build/repo/package.json' // Netlify specific path
+    ];
+
+    for (const pkgPath of possiblePaths) {
+      try {
+        const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+        console.log('Found package.json at:', pkgPath);
+        return {
+          name: pkg.name,
+          description: pkg.description,
+          license: pkg.license,
+          version: pkg.version,
+          dependencies: pkg.dependencies || {},
+          devDependencies: pkg.devDependencies || {},
+          peerDependencies: pkg.peerDependencies || {},
+          optionalDependencies: pkg.optionalDependencies || {},
+        };
+      } catch (e) {
+        console.log('Failed to read from:', pkgPath);
+      }
+    }
+    throw new Error('package.json not found in any expected location');
   } catch (error) {
     console.warn('Failed to read package.json:', error);
     return {

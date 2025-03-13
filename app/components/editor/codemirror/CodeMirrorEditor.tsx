@@ -15,6 +15,7 @@ import {
   showTooltip,
   tooltips,
   type Tooltip,
+  type KeyBinding,
 } from '@codemirror/view';
 import { memo, useEffect, useRef, useState, type MutableRefObject } from 'react';
 import type { Theme } from '~/types/theme';
@@ -114,6 +115,27 @@ const editableStateField = StateField.define<boolean>({
     return value;
   },
 });
+
+function createKeymap(onFileSaveRef: MutableRefObject<OnSaveCallback | undefined>): KeyBinding[] {
+  return [
+    ...defaultKeymap.map((kb) => ({ ...kb }) as KeyBinding),
+    ...historyKeymap.map((kb) => ({ ...kb }) as KeyBinding),
+    ...searchKeymap.map((kb) => ({ ...kb }) as KeyBinding),
+    {
+      key: 'Tab',
+      run: (view) => acceptCompletion(view),
+    } as KeyBinding,
+    {
+      key: 'Mod-s',
+      preventDefault: true,
+      run: () => {
+        onFileSaveRef.current?.();
+        return true;
+      },
+    } as KeyBinding,
+    { ...indentKeyBinding } as KeyBinding,
+  ];
+}
 
 export const CodeMirrorEditor = memo(
   ({
@@ -300,21 +322,7 @@ function newEditorState(
       }),
       getTheme(theme, settings),
       history(),
-      keymap.of([
-        ...defaultKeymap,
-        ...historyKeymap,
-        ...searchKeymap,
-        { key: 'Tab', run: acceptCompletion },
-        {
-          key: 'Mod-s',
-          preventDefault: true,
-          run: () => {
-            onFileSaveRef.current?.();
-            return true;
-          },
-        },
-        indentKeyBinding,
-      ]),
+      keymap.of(createKeymap(onFileSaveRef)),
       indentUnit.of('\t'),
       autocompletion({
         closeOnBlur: false,

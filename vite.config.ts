@@ -1,15 +1,18 @@
 import UnoCSS from 'unocss/vite';
-import { defineConfig, type ViteDevServer } from 'vite';
+import { defineConfig, type ConfigEnv, type UserConfig, type PluginOption } from 'vite';
 import react from '@vitejs/plugin-react';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { optimizeCssModules } from 'vite-plugin-optimize-css-modules';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { vitePlugin as remix } from '@remix-run/dev';
+import { netlifyPlugin } from "@netlify/remix-adapter/plugin";
 import * as dotenv from 'dotenv';
 import { execSync } from 'child_process';
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+// Replace viteCommonjs with @rollup/plugin-commonjs
+import commonjs from '@rollup/plugin-commonjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -89,7 +92,7 @@ function getGitInfo() {
   }
 }
 
-export default defineConfig((config) => {
+export default defineConfig((config: ConfigEnv): UserConfig => {
   const isDev = config.mode === 'development';
   const pkg = getPackageJson();
   const gitInfo = getGitInfo();
@@ -126,39 +129,50 @@ export default defineConfig((config) => {
           'path',
           'fs',
           'crypto'
-        ]
-      },
-      commonjsOptions: {
-        include: [/node_modules/],
-        transformMixedEsModules: true
+        ],
+        output: {
+          format: 'es'
+        },
+        plugins: []
       }
     },
     optimizeDeps: {
-      include: ['@remix-run/react'],
-      exclude: ['@remix-run/dev/server-build']
+      include: [
+        '@remix-run/react',
+        '@remix-run/node',
+        '@remix-run/netlify',
+        '@netlify/remix-adapter'
+      ],
+      exclude: ['@remix-run/dev/server-build'],
+      esbuildOptions: {
+        target: 'es2020',
+        format: 'esm',
+        platform: 'node'
+      }
     },
     resolve: {
       dedupe: ['react', 'react-dom'],
       preserveSymlinks: true,
-      mainFields: ['module', 'main']
+      mainFields: ['module', 'main', 'browser']
     },
     plugins: [
-      remix({
-        ssr: true
-      }),
+      viteCommonJsTypeFixPlugin(), // Re-enable this plugin
+      remix() as PluginOption,
+      tsconfigPaths() as PluginOption,
+      netlifyPlugin() as PluginOption,
+      commonjs() as PluginOption,
       nodePolyfills({
         include: ['path', 'buffer', 'process', 'fs'],
         globals: {
           process: true,
           Buffer: true
         }
-      }),
-      react(),
-      UnoCSS(),
-      tsconfigPaths(),
-      chrome129IssuePlugin(),
+      }) as PluginOption,
+      react() as PluginOption,
+      UnoCSS() as PluginOption,
+      chrome129IssuePlugin() as PluginOption,
       config.mode === 'production' && optimizeCssModules({ apply: 'build' })
-    ].filter(Boolean),
+    ].filter((p): p is PluginOption => Boolean(p)),
     envPrefix: [
       'VITE_',
       'OPENAI_LIKE_API_BASE_URL',
@@ -179,7 +193,7 @@ export default defineConfig((config) => {
 function chrome129IssuePlugin() {
   return {
     name: 'chrome129IssuePlugin',
-    configureServer(server: ViteDevServer) {
+    configureServer(server: import('vite').ViteDevServer) {
       server.middlewares.use((req, res, next) => {
         const raw = req.headers['user-agent']?.match(/Chrom(e|ium)\/([0-9]+)\./);
         if (raw) {
@@ -195,5 +209,77 @@ function chrome129IssuePlugin() {
         next();
       });
     },
+  };
+}
+
+function viteCommonJsTypeFixPlugin() {
+  return {
+    name: 'vite-commonjs-type-fix',
+    configResolved(config: import('vite').ResolvedConfig) {
+      // Find the commonjs resolver plugin
+      const plugins = config.plugins || [];
+      for (const plugin of plugins) {
+        if (plugin && plugin.name === 'commonjs--resolver') {
+          // Monkey patch the resolveId method to add type checking
+          const originalResolveId = plugin.resolveId;
+          if (originalResolveId) {
+            plugin.resolveId = function(id, ...args) {
+              // Handle non-string ids by returning null
+              if (id === null || id === undefined || typeof id !== 'string') {
+                console.log('Intercepted non-string ID in commonjs--resolver:', id);
+                return null;
+              }
+              // Only proceed with string ids
+              try {
+                return typeof originalResolveId === 'function' ? originalResolveId.call(this, id, ...args) : originalResolveId.handler.call(this, id, ...args);
+              } catch (error) {
+                console.error('Error in commonjs--resolver resolveId:', error);
+                return null;
+              }
+            };
+          }
+          
+          // Also patch the load method if it exists
+          const originalLoad = plugin.load;
+          if (originalLoad) {
+            plugin.load = function(id, ...args) {
+              // Handle non-string ids
+              if (id === null || id === undefined || typeof id !== 'string') {
+                return null;
+              }
+              // Only proceed with string ids
+              try {
+                return typeof originalLoad === 'function' ? originalLoad.call(this, id, ...args) : originalLoad.handler.call(this, id, ...args);
+              } catch (error) {
+                console.error('Error in commonjs--resolver load:', error);
+                return null;
+              }
+            };
+          }
+          
+          // Patch transform method if it exists
+          const originalTransform = plugin.transform;
+          if (originalTransform) {
+            plugin.transform = function(code, id, ...args) {
+              // Handle non-string ids
+              if (id === null || id === undefined || typeof id !== 'string') {
+                return null;
+              }
+              // Only proceed with string ids and valid code
+              if (typeof code !== 'string') {
+                console.log('Intercepted non-string code in commonjs--resolver transform');
+                return null;
+              }
+              try {
+                return typeof originalTransform === 'function' ? originalTransform.call(this, code, id, ...args) : originalTransform.handler.call(this, code, id, ...args);
+              } catch (error) {
+                console.error('Error in commonjs--resolver transform:', error);
+                return null;
+              }
+            };
+          }
+        }
+      }
+    }
   };
 }

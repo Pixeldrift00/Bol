@@ -8,6 +8,7 @@
   "version": "0.0.7",
   "scripts": {
     "deploy": "netlify deploy --prod",
+    "prebuild": "node scripts/pre-build.js",
     "build": "remix vite:build",
     "dev": "node pre-start.cjs && remix vite:dev",
     "netlify:dev": "netlify dev",

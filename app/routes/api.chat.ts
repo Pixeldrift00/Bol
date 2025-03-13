@@ -134,7 +134,7 @@ async function chatAction({ context, request }: Parameters<ActionFunction>[0]) {
           console.log(`Messages count: ${messages.length}`);
           filteredFiles = await selectContext({
             messages: [...messages],
-            env: (context as any).netlify?.env || process.env, // Update from cloudflare to netlify
+            env: (context as any).netlify?.env || process.env,
             apiKeys,
             files,
             providerSettings,

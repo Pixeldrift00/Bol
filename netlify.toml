@@ -1,9 +1,10 @@
 [build]
   base = "/"
-  command = "pnpm install && NODE_ENV=production pnpm run build"
+  command = "pnpm install && pnpm run build"
   publish = "build/client"
   node_bundler = "esbuild"
   edge_functions = "true"
+  NODE_ENV = "production"
 
 [build.environment]
   NODE_VERSION = "20.15.1"

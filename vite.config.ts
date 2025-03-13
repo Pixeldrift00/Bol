@@ -152,7 +152,9 @@ export default defineConfig((config: ConfigEnv): UserConfig => {
         '@remix-run/react',
         '@remix-run/node',
         '@remix-run/netlify',
-        '@netlify/remix-adapter'
+        '@netlify/remix-adapter',
+        'react-dom/server.browser',
+        'react-dom/server'
       ],
       exclude: ['@remix-run/dev/server-build'],
       esbuildOptions: {
@@ -163,6 +165,9 @@ export default defineConfig((config: ConfigEnv): UserConfig => {
           'top-level-await': true 
         }
       },
+    },
+    ssr: {
+      noExternal: ['react-dom'],
     },
     
     resolve: {

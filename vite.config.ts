@@ -146,6 +146,7 @@ export default defineConfig((config: ConfigEnv): UserConfig => {
         }
       }
     },
+    // Modify the optimizeDeps configuration to avoid CommonJS issues
     optimizeDeps: {
       include: [
         '@remix-run/react',
@@ -161,8 +162,9 @@ export default defineConfig((config: ConfigEnv): UserConfig => {
         supported: { 
           'top-level-await': true 
         }
-      }
+      },
     },
+    
     resolve: {
       dedupe: ['react', 'react-dom'],
       preserveSymlinks: true,

@@ -11,7 +11,9 @@
   PNPM_VERSION = "9.4.0"
   NPM_FLAGS = "--version"
   NODE_OPTIONS = "--max_old_space_size=4096"
-
+  VITE_SKIP_PLUGIN_COMMONJS = "true"
+  REMIX_SKIP_COMMONJS_RESOLVER = "true"
+  DEBUG = "vite:*"
 
 [[headers]]
   for = "/*"

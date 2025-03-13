@@ -169,11 +169,16 @@ export default defineConfig((config: ConfigEnv): UserConfig => {
       mainFields: ['module', 'main', 'browser']
     },
     plugins: [
-      viteCommonJsTypeFixPlugin(), // Re-enable this plugin
+      // Remove the viteCommonJsTypeFixPlugin and add commonjs earlier in the chain
+      commonjs({
+        // Add more specific options if needed
+        include: [/node_modules/, /\.cjs$/],
+        transformMixedEsModules: true,
+        requireReturnsDefault: 'namespace'
+      }) as PluginOption,
       remix() as PluginOption,
       tsconfigPaths() as PluginOption,
       netlifyPlugin() as PluginOption,
-      commonjs() as PluginOption,
       nodePolyfills({
         include: ['path', 'buffer', 'process', 'fs'],
         globals: {

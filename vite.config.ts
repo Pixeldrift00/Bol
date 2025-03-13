@@ -232,37 +232,19 @@ function viteCommonJsTypeFixPlugin() {
       const plugins = config.plugins || [];
       for (const plugin of plugins) {
         if (plugin && plugin.name === 'commonjs--resolver') {
-          // Patch resolveId
-          const originalResolveId = (plugin as any).resolveId;
-          if (originalResolveId) {
-            plugin.resolveId = function(id: any, ...args: any[]) {
-              // Ensure id is a string and handle null/undefined
-              if (id == null) return null;
-              const stringId = String(id);
-              
-              try {
-                return typeof originalResolveId === 'function' 
-                  ? originalResolveId.call(this, stringId, ...args) 
-                  : originalResolveId.handler.call(this, stringId, ...args);
-              } catch (error) {
-                console.warn('CommonJS resolver error:', error);
-                return null;
-              }
-            };
-          }
-          
-          // Also ensure the plugin's other methods handle non-string IDs
-          ['load', 'transform'].forEach(method => {
-            const original = (plugin as Record<string, any>)[method];
+          // Patch all methods that might receive an ID
+          ['resolveId', 'load', 'transform'].forEach(method => {
+            const original = (plugin as any)[method];
             if (original) {
               (plugin as any)[method] = function(id: any, ...args: any[]) {
+                // Ensure id is a string before passing it to the original method
                 if (id == null) return null;
                 const stringId = String(id);
                 
                 try {
                   return typeof original === 'function'
                     ? original.call(this, stringId, ...args)
-                    : original.handler.call(this, stringId, ...args);
+                    : original.handler?.call(this, stringId, ...args);
                 } catch (error) {
                   console.warn(`CommonJS resolver ${method} error:`, error);
                   return null;
@@ -270,6 +252,21 @@ function viteCommonJsTypeFixPlugin() {
               };
             }
           });
+          
+          // Also patch isWrappedId function if it exists
+          if ((plugin as any).isWrappedId) {
+            const originalIsWrappedId = (plugin as any).isWrappedId;
+            (plugin as any).isWrappedId = function(id: any) {
+              if (id == null) return false;
+              const stringId = String(id);
+              try {
+                return originalIsWrappedId(stringId);
+              } catch (error) {
+                console.warn('isWrappedId error:', error);
+                return false;
+              }
+            };
+          }
         }
       }
     }

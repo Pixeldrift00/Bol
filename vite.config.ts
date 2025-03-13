@@ -112,7 +112,7 @@ export default defineConfig((config) => {
       __PKG_LICENSE: JSON.stringify(pkg.license),
     },
     build: {
-      target: 'esnext',
+      target: 'es2020',
       rollupOptions: {
         input: {
           app: './index.html'
@@ -126,10 +126,7 @@ export default defineConfig((config) => {
           'path',
           'fs',
           'crypto'
-        ],
-        output: {
-          format: 'esm'
-        }
+        ]
       },
       commonjsOptions: {
         include: [/node_modules/],
@@ -138,10 +135,7 @@ export default defineConfig((config) => {
     },
     optimizeDeps: {
       include: ['@remix-run/react'],
-      exclude: ['@remix-run/dev/server-build'],
-      esbuildOptions: {
-        target: 'esnext'
-      }
+      exclude: ['@remix-run/dev/server-build']
     },
     resolve: {
       dedupe: ['react', 'react-dom'],

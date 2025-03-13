@@ -9,16 +9,10 @@
   PNPM_VERSION = "9.4.0"
   NPM_FLAGS = "--version"
   NODE_OPTIONS = "--max_old_space_size=4096"
-  DISABLE_CACHE = true
 
-[dev]
-  command = "pnpm run dev"
-  port = 5173
-  targetPort = 5173
 
 [functions]
   directory = "functions"
-  included_files = ["build/server/**/*", "build/client/**/*"]
 
 [[redirects]]
   from = "/@app/*"
@@ -36,6 +30,7 @@
   from = "/*"
   to = "/.netlify/functions/path-handler"
   status = 200
+  force = true
 
 [[headers]]
   for = "/*"

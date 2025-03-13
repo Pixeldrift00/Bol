@@ -5,7 +5,7 @@ export default {
   serverBuildTarget: "netlify",
   serverBuildPath: "build/server/index.js",
   serverDependenciesToBundle: "all",
-  server: process.env.NODE_ENV === "development" ? undefined : "./server.js",
+  server: "./server.js",
   future: {
     v2_dev: true,
     v2_errorBoundary: true,

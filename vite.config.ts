@@ -7,18 +7,24 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import * as dotenv from 'dotenv';
 import { execSync } from 'child_process';
 import { readFileSync } from 'fs';
-import { resolve } from 'path';
-import { cwd } from 'process';
+import { join } from 'path';
 
 dotenv.config();
 
-// Replace the ESM __dirname calculation with direct path resolution
-const projectRoot = cwd();
-
 function getPackageJson() {
-  const packagePath = resolve(projectRoot, 'package.json');
   try {
-    return JSON.parse(readFileSync(packagePath, 'utf-8'));
+    const pkgPath = join(process.cwd(), 'package.json');
+    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+    return {
+      name: pkg.name,
+      description: pkg.description,
+      license: pkg.license,
+      version: pkg.version,
+      dependencies: pkg.dependencies || {},
+      devDependencies: pkg.devDependencies || {},
+      peerDependencies: pkg.peerDependencies || {},
+      optionalDependencies: pkg.optionalDependencies || {},
+    };
   } catch (error) {
     console.warn('Failed to read package.json:', error);
     return {
@@ -36,7 +42,7 @@ function getPackageJson() {
 
 function getGitInfo() {
   try {
-    const execOptions = { cwd: projectRoot, encoding: 'utf8' as BufferEncoding };
+    const execOptions = { cwd: process.cwd(), encoding: 'utf8' as BufferEncoding };
     return {
       commitHash: execSync('git rev-parse --short HEAD', execOptions).trim(),
       branch: execSync('git rev-parse --abbrev-ref HEAD', execOptions).trim(),

@@ -6768,9 +6768,9 @@ packages:
     resolution: {integrity: sha512-J8NhP044nrNIam/xOT1L9a4RQ9FSaA2wyrUwmN8ZT+c/+CdAAf70yfaLnvMyKcV5U+8BcURQ/aVbth77sT6jGA==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
-      '@remix-run/cloudflare': ^2.0.0
-      '@remix-run/node': ^2.0.0
-      '@remix-run/react': ^2.0.0
+      '@remix-run/cloudflare': ^1.9.2
+      '@remix-run/node': ^1.9.2
+      '@remix-run/react': ^1.9.2
       '@remix-run/router': ^1.7.2
       crypto-js: ^4.1.1
       intl-parse-accept-language: ^1.0.0

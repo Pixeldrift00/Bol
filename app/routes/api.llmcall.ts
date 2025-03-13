@@ -24,7 +24,6 @@ async function getModelList(options: {
 
 const logger = createScopedLogger('api.llmcall');
 
-// Update any references to context.cloudflare to context.netlify
 async function llmCallAction({ context, request }: Parameters<ActionFunction>[0]) {
   const { system, message, model, provider, streamOutput } = (await request.json()) as {
     system: string;

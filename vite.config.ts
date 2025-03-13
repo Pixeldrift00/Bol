@@ -13,7 +13,8 @@ dotenv.config();
 
 function getPackageJson() {
   try {
-    const pkgPath = join(process.cwd(), 'package.json');
+    // Use "./package.json" to match the watchPaths in remix.config.mjs
+    const pkgPath = join(process.cwd(), './package.json');
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
     return {
       name: pkg.name,

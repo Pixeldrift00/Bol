@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { optimizeCssModules } from 'vite-plugin-optimize-css-modules';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { vitePlugin as remix } from '@remix-run/dev';
 import * as dotenv from 'dotenv';
 import { execSync } from 'child_process';
 import { readFileSync } from 'fs';
@@ -137,19 +138,11 @@ export default defineConfig((config) => {
       preserveSymlinks: true
     },
     plugins: [
+      remix(),
       nodePolyfills({
         include: ['path', 'buffer', 'process', 'fs'],
       }),
       react(),
-      {
-        name: 'remix-vite-plugin',
-        configResolved() {
-          process.env.REMIX_FUTURE_V3_FETCHER_PERSIST = 'true';
-          process.env.REMIX_FUTURE_V3_RELATIVE_SPLAT_PATH = 'true';
-          process.env.REMIX_FUTURE_V3_THROW_ABORT_REASON = 'true';
-          process.env.REMIX_FUTURE_V3_LAZY_ROUTE_DISCOVERY = 'true';
-        },
-      },
       UnoCSS(),
       tsconfigPaths(),
       chrome129IssuePlugin(),

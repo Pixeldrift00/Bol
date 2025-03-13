@@ -12,12 +12,6 @@
   NODE_OPTIONS = "--max_old_space_size=4096"
 
 
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/path-handler"
-  status = 200
-  force = true
-
 [[headers]]
   for = "/*"
   [headers.values]

@@ -142,7 +142,7 @@
     "@iconify-json/ph": "^1.2.1",
     "@iconify/types": "^2.0.0",
     "@netlify/functions": "^3.0.1",
-    "@remix-run/dev": "^1.19.3",
+    "@remix-run/dev": "^2.15.2",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@types/diff": "^5.2.3",
